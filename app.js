@@ -3,6 +3,7 @@ const path = require("path");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcryptjs");
 
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
@@ -45,34 +46,47 @@ app.get("/sign-up", (req, res) => {
 
 // post for the sig-up to add users to database
 app.post("/sign-up", (req, res, next) => {
-    // create new user, get the username and password
-    const user = new User({
-        username: req.body.username,
-        password: req.body.password
-    }).save(err => {
-        // error handing
-        if(err) {
-            return next(err);
+    // create new user, get the username and password hash the password
+    bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+        if(err){
+            console.log('hashing password error');
+        } else {
+        // otherwise, store hashedPassword in DB
+            const user = new User({
+                username: req.body.username,
+                password: hashedPassword
+            }).save(err => {
+                // error handing
+                if(err) {
+                    return next(err);
+                };
+                // redirect after
+                res.redirect("/");
+            });
         };
-        // redirect after
-        res.redirect("/");
-    });
+      });
+
 });
 
-// try to find 'User' in the db with POSTing username and password
+// try to find 'User' in the db with POSTing username and password (hashed)
 passport.use(
     new LocalStrategy((username, password, done) => {
       User.findOne({ username: username }, (err, user) => {
         if (err) { 
           return done(err);
-        }
+        };
         if (!user) {
           return done(null, false, { message: "Incorrect username" });
-        }
-        if (user.password !== password) {
-          return done(null, false, { message: "Incorrect password" });
-        }
-        return done(null, user);
+        };
+        bcrypt.compare(password, user.password, (err, res) => {
+            if (res) {
+                // passwords match! log user in
+                return done(null, user)
+            } else {
+                // passwords do not match!
+                return done(null, false, { message: "Incorrect password" })
+            }
+        });
       });
     })
 );
