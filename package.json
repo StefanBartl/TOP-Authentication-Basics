@@ -1,0 +1,30 @@
+{
+  "name": "top-authentication-basics",
+  "version": "1.0.0",
+  "description": "The Odin Project - Chapter 'Authentication Basics' in the 'node.js path': https://www.theodinproject.com/lessons/nodejs-authentication-basics",
+  "main": "app.js",
+  "scripts": {
+    "devstart": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StefanBartl/TOP-Authentication-Basics.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StefanBartl/TOP-Authentication-Basics/issues"
+  },
+  "homepage": "https://github.com/StefanBartl/TOP-Authentication-Basics#readme",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "mongoose": "^6.4.2",
+    "nodemon": "^2.0.18",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0"
+  }
+}
